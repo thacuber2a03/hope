@@ -1,0 +1,24 @@
+# depslib dependency file v1.0
+1663029779 source:c:\users\usuario\documents\code\c\hope\fe.c
+	<string.h>
+	"fe.h"
+	<setjmp.h>
+
+1663077275 c:\users\usuario\documents\code\c\hope\fe.h
+	<stdlib.h>
+	<stdio.h>
+
+1663082448 source:c:\users\usuario\documents\code\c\hope\main.c
+	<stdlib.h>
+	<stdio.h>
+	<string.h>
+	"hope.h"
+
+1663083059 source:c:\users\usuario\documents\code\c\hope\api.c
+	<math.h>
+	"hope.h"
+
+1663083036 c:\users\usuario\documents\code\c\hope\hope.h
+	<SDL2/SDL.h>
+	"fe.h"
+

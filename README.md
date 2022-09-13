@@ -5,7 +5,8 @@ hope is a lightweight 2d game framework you can use to make games with the [fe](
 it's more of an SDL2 wrapper than it is a framework, but I like to think of it as a framework
 
 ## how to use
-like love2d, hope needs to have a folder path passed to it. from there it'll look for main.fe and optionally conf.fe
+like love2d, hope needs to have a folder path passed to it. from there it'll look for main.fe and optionally conf.fe, if it exists.
+unsure if you can just drag a folder towards the executable, haven't tried that yet.
 
 ## building
 the easiest way to build is to clone the repo and open hope.cbp in code::blocks.

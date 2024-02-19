@@ -1,0 +1,15 @@
+(macro vector (x y) (list 'cons (or x 0) (or y 0)))
+(func  vector:clone (v) v)
+
+(func vector:add   (a b) (vector (+   (car a) (car b)) (+   (cdr a) (cdr b))) )
+(func vector:sub   (a b) (vector (-   (car a) (car b)) (-   (cdr a) (cdr b))) )
+(func vector:scale (v n) (vector (*   (car v) n      ) (*   (cdr v) n      )) )
+(func vector:div   (v n) (vector (/   (car v) n      ) (/   (cdr v) n      )) )
+(func vector:neg   (v)   (vector (neg (car v)        ) (neg (cdr v)        )) )
+
+(func vector:dot    (a b) (+ (* (car a) (car b)) (* (cdr a) (cdr b))) )
+(func vector:magsq  (v)   (vector:dot v v)               )
+(func vector:mag    (v)   (sqrt (vector:magsq v))        )
+(func vector:distsq (a b) (vector:magsq (vector:sub b a)))
+(func vector:dist   (a b) (sqrt (vector:magsq v))        )
+(func vector:norm   (v)   (vector:div v (vector:mag v))  )

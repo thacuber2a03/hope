@@ -3,49 +3,47 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="hope" />
+		<Option platforms="Windows;" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Debug">
-				<Option output="bin/Debug/hope" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Debug/" />
-				<Option type="1" />
-				<Option compiler="gcc" />
-				<Option parameters="test" />
-				<Compiler>
-					<Add option="-g" />
-				</Compiler>
-				<Linker>
-					<Add library="libmingw32" />
-					<Add library="libSDL2main" />
-					<Add library="libSDL2" />
-				</Linker>
-			</Target>
 			<Target title="Release">
+				<Option platforms="Windows;" />
 				<Option output="bin/Release/hope" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters='&quot;demos\collect the coin&quot;' />
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="allegro" />
+					<Add library="allegro_main" />
+					<Add library="allegro_primitives" />
+					<Add library="allegro_ttf" />
+					<Add library="allegro_font" />
+					<Add library="allegro_image" />
+					<Add library="allegro_acodec" />
+					<Add library="allegro_audio" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="api.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="fe.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="fe.h" />
+		<Unit filename="hope.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="test/conf.fe" />
-		<Unit filename="test/main.fe" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>

@@ -1,0 +1,111 @@
+; collect the coin
+; small demo game to test many of hope's features
+; by @thacuber2a03
+
+(func hope:init ()
+	(= wWidth  (hope:get-width ))
+	(= wHeight (hope:get-height))
+
+	; player info
+	(= playerX (/ wWidth 2) )
+	(= playerY (/ wHeight 2) )
+	(= playerW 100) (= playerH 100)
+	; subtract half the player's size from the position to center
+	(-= playerX (/ playerW 2)) (-= playerY (/ playerH 2))
+	(= playerScore 0)
+
+	; coin info
+	(= coinX 0) (= coinY 0)
+	(= coinR 20)
+	(move-coin)
+
+	; assets
+	(= guyImage (hope:load-image "guy.png"))
+	(hope:set-font (hope:load-font "arial.ttf" 20))
+	(= coinSample (hope:load-sample "coin.wav"))
+)
+
+(func move-coin ()
+	(= coinX (hope:random coinR (- wWidth coinR)))
+	(= coinY (hope:random coinR (- wHeight coinR)))
+)
+
+; rect-vs-circle function taken from
+; jeffreythompson.org/collision-detection
+; thanks!
+(func rect-vs-circle (rx ry w h cx cy r)
+	(let testX cx)
+	(let testY cy)
+
+	(if (< cx rx)       (= testX rx)
+	    (> cx (+ rx w)) (= testX (+ rx w)))
+
+	(if (< cy ry)       (= testY ry)
+	    (> cy (+ ry h)) (= testY (+ ry h)))
+
+	(<= (hope:dist cx cy testX testY) r)
+)
+
+(func update-player (dt)
+	; (let mousePos (hope:get-mouse-pos))
+	; (= playerX (- (car mousePos) (/ playerW 2)))
+	; (= playerY (- (cdr mousePos) (/ playerH 2)))
+
+	(let vel (* 500 dt))
+
+	(if
+		(hope:key-down "right") (+= playerX vel)
+		(hope:key-down "left")  (-= playerX vel)
+	)
+
+	(if
+		(hope:key-down "down") (+= playerY vel)
+		(hope:key-down "up")   (-= playerY vel)
+	)
+)
+
+(func constrain-in-walls ()
+	(if
+		(< playerX 0) (= playerX 0)
+		(> playerX (- wWidth playerW)) (= playerX (- wWidth playerW))
+	)
+
+	(if
+		(< playerY 0) (= playerY 0)
+		(> playerY (- wHeight playerH)) (= playerY (- wHeight playerH))
+	)
+)
+
+(func hope:update (dt)
+	(update-player dt)
+	(constrain-in-walls)
+	(if (hope:key-down "escape") (hope:quit))
+
+	(hope:set-color 0 .7 0)
+	(hope:clear)
+
+	(when (rect-vs-circle playerX playerY playerW playerH
+	                      coinX coinY coinR)
+		(inc playerScore)
+		(move-coin)
+		(hope:play-sample-instance (hope:make-sample-instance coinSample))
+	)
+	; (hope:set-color 0 0 1)
+	; (if (hope:mouse-button-down "left") (hope:set-color 1 0 0) )
+	; (hope:rect "fill" playerX playerY playerW playerH)
+	(hope:set-color 1 1 1)
+	(hope:draw-image guyImage playerX playerY playerW playerH)
+
+	(hope:set-color 1 1 0)
+	(hope:circ "fill" coinX coinY coinR)
+
+	(hope:set-color 1 1 1)
+	(hope:text "Score" 0 0)
+	(hope:text playerScore 0 (hope:get-font-height))
+)
+
+(func hope:exit ()
+	(hope:unload-image guyImage)
+	(hope:unload-font (hope:get-font))
+	(hope:unload-sample coinSample)
+)

@@ -1,0 +1,39 @@
+(macro list:push (lst val) (list '= lst (list 'cons val lst)) )
+
+(macro list:pop (lst)
+	(list 'do
+		(list 'let 'res (list 'car lst))
+		(list '= lst (list 'cdr lst))
+		'res
+	)
+)
+
+(func list:reverse (lst)
+	(let res nil)
+	(while lst
+		(list:push res (car lst))
+		(list:pop lst)
+	)
+	res
+)
+
+(func list:copy (lst) lst) ; yes, fe is just so fun
+
+; why must I have to repeat myself so many times ;-;
+(func list:map (lst f)
+	(let res nil)
+	(while lst (list:push res (f (car lst))) (list:pop lst) )
+	(list:reverse res)
+)
+
+(func list:filter (lst f)
+	(let res nil)
+	(while lst (if (f (car l)) (list:push res (car l)) ) (list:pop l) )
+	(list:reverse res)
+)
+
+(func list:reject (lst f)
+	(let res nil)
+	(while l (if (not (f (car l))) (list:push res (car l)) ) (list:pop l) )
+	(list:reverse res)
+)

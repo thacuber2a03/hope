@@ -1,35 +1,45 @@
 #ifndef HOPE_H
 #define HOPE_H
 
-#include <SDL2/SDL.h>
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_image.h>
+#include <allegro5/allegro_acodec.h>
+#include <allegro5/allegro_audio.h>
+
 #include "fe.h"
 
-#define MAX_LEN_WINDOW_TITLE 64+1 // +1 to hold null char
+#define HOPE_VERSION "0.0.1"
 
-#define WRONG_GLOBAL_TYPE_MSG "Wrong type passed to the %s global. Defaulting to %s...\n"
-#define WINDOW_TITLE_GLOBAL_NAME "windowTitle"
-#define WINDOW_DEFAULT_TITLE "hope"
-#define WINDOW_SIZE_GLOBAL_NAME "windowSize"
-#define WINDOW_DEFAULT_WIDTH 600
-#define WINDOW_DEFAULT_HEIGHT 600
+#define FE_DATA_SIZE (1024 * 1024)
+#define FE_ERROR_LEN 128
+#define HOPE_ERROR_LEN 2048
+#define HOPE_PATH_SIZE 0x7fff // reeeally unlikely to hit this limit
+#define FILENAME_LEN 256
+#define NORMAL_STR_LEN 256
+#define TITLE_MAX_LEN 256
 
-#define nextArgAsNumber(ctx, arg) (fe_tonumber((ctx), fe_nextarg((ctx), &(arg))))
+extern void load_api(fe_Context*);
+extern fe_Object* hope_do_string(fe_Context*, const char*);
 
-extern SDL_Window* window;
-extern SDL_Renderer* renderer;
-extern SDL_bool running;
+extern int wWidth;
+extern int wHeight;
+extern char wTitle[TITLE_MAX_LEN+1];
+extern bool running;
+extern char gameFolder[HOPE_PATH_SIZE];
 
-#define FE_DATA_SIZE (1024*16)
-extern void* ctx_data;
-extern fe_Context* ctx;
+extern ALLEGRO_COLOR cur_draw_col;
+extern ALLEGRO_EVENT_QUEUE* event_queue;
+extern ALLEGRO_DISPLAY* display;
 
-struct APIFunc
-{
-	char* name;
-	fe_Object* (*func)(fe_Context*, fe_Object*);
-};
+extern ALLEGRO_KEYBOARD_STATE kState;
+extern ALLEGRO_MOUSE_STATE    mState;
 
-#define API_LEN 9
-extern const struct APIFunc API[API_LEN];
+typedef enum { HOPE_SAMPLE, HOPE_SAMPLE_INSTANCE, HOPE_FONT, HOPE_IMAGE } hope_asset_type;
+typedef struct { hope_asset_type type; void* value; } hope_asset;
+extern hope_asset* current_font;
+extern hope_asset* builtin_font;
 
 #endif // HOPE_H

@@ -1,0 +1,15 @@
+(= test (list 1 2 3 4))
+(do
+	(let testCopy (list:copy test))
+	(let i 0)
+	(while (<= i 4)
+		(print (list:filter testCopy (fn (v) (<= v 4))))
+		(print testCopy)
+		(= testCopy (list:map testCopy (fn (v) (+ v 1))))
+		(inc i)
+	)
+)
+
+(func hope:update ()
+	(if (hope:key-down) (hope:quit))
+)

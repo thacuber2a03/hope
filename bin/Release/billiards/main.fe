@@ -1,0 +1,17 @@
+(= wWidth (hope:get-width))
+(= wHeight (hope:get-height))
+
+(macro push (lst val) (list '= lst (list 'cons val lst)))
+
+(func hope:init ()
+	(= balls nil)
+	(make-ball (/ wWidth 2) (/ wHeight 2) 1 1 5)
+)
+
+(func make-ball (x y dx dy r)
+	(push balls (list x y dx dy))
+)
+
+(func hope:update (dt)
+
+)

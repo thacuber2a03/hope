@@ -1,0 +1,106 @@
+(require "list.fe")
+(require "vector.fe")
+
+(func caar (x) (car (car x)))
+(func cdar (x) (cdr (car x)))
+
+(func clear (r g b)
+	(hope:set-color r g b)
+	(hope:clear)
+)
+
+(func hope:init ()
+	(= wWidth (hope:get-width))
+	(= wHeight (hope:get-height))
+	(= gravity 9.80)
+
+	(= balls nil)
+	(for i (range 10)
+		(let r 20)
+		(list:push balls (list
+			(vector (hope:random r (- wWidth r)) (hope:random r (- wHeight r))) ; pos
+			(vector) ; vel
+			r (* r r) ; radius and mass
+		))
+	)
+)
+
+(func simulate (b dt grav)
+	(= pos (list:nthcdr b 0))
+	(= vel (list:nthcdr b 1))
+
+	; working with pointers is annoying as fuck
+	(setcdr (car vel) (+ (cdar vel) (or grav gravity)))
+	(setcar pos (vector:add (car pos) (vector:scale (car vel) dt)))
+)
+
+(func wallcoll (b)
+	(= pos (list:nthcdr b 0))
+	(= vel (list:nthcdr b 1))
+	(= rad (list:nth    b 2))
+
+	; I will go crazy
+	(when (< (caar pos) rad)
+		(setcar (car pos) rad)
+		(setcar (car vel) (neg (caar vel)))
+	)
+
+	(when (> (caar pos) (- wWidth rad))
+		(setcar (car pos) (- wWidth rad))
+		(setcar (car vel) (neg (caar vel)))
+	)
+
+	(when (< (cdar pos) rad)
+		(setcdr (car pos) rad)
+		(setcdr (car vel) (neg (cdar vel)))
+	)
+
+	(when (> (cdar pos) (- wHeight rad))
+		(setcdr (car pos) (- wHeight rad))
+		(setcdr (car vel) (neg (cdar vel)))
+	)
+)
+
+(func ballcoll (dt b1 b2 rst)
+	; rst = restitution
+	(= pos1  (list:nthcdr b1 0)) (= pos2  (list:nthcdr b2 0))
+	(= vel1  (list:nthcdr b1 1)) (= vel2  (list:nthcdr b2 1))
+	(= rad1  (list:nth    b1 2)) (= rad2  (list:nth    b2 2))
+	(= mass1 (list:nth    b1 3)) (= mass2 (list:nth    b2 3))
+
+	(let dir (vector:sub (car pos2) (car pos1)))
+	(let d   (vector:mag dir))
+	(unless (or (is d 0) (> d (+ rad1 rad2)))
+		; me when normalizing without vector:norm
+		(= dir (vector:div dir d))
+
+		(let corr (/ (- (+ rad1 rad2) d) 2))
+		(setcar pos1 (vector:scale (vector:add (car pos1) dir) corr))
+		(setcar pos2 (vector:scale (vector:add (car pos2) dir) (neg corr)))
+
+		(let v1 (vector:dot (car vel1) dir))
+		(let v2 (vector:dot (car vel2) dir))
+		(let m1 mass1) (let m2 mass2)
+
+		(let newv1 (/ (- (+ (* m1 v1) (* m2 v2)) (* m2 (- v1 v2) rst)) (+ m1 m2)))
+		(let newv2 (/ (- (+ (* m1 v1) (* m2 v2)) (* m1 (- v2 v1) rst)) (+ m1 m2)))
+		(print (* (- newv1 v1) dt))
+		(setcar vel1 (vector:scale (vector:add (car vel1) dir) (* (- newv1 v1) dt)))
+		(setcar vel2 (vector:scale (vector:add (car vel2) dir) (* (- newv2 v2) dt)))
+	)
+)
+
+(func hope:update (dt)
+	(clear 0 0 0)
+	(hope:set-color 1 1 1)
+	(for b balls
+		(simulate b dt gravity)
+		(for b2 balls (ballcoll dt b b2 1)) ; completely elastic collision
+		(wallcoll b)
+
+		(= pos (list:nth b 0)) (= rad (list:nth b 2))
+		(let x (car pos)) (let y (cdr pos))
+		(hope:circ "fill" x y rad)
+	)
+	(if (hope:key-down "escape") (hope:quit))
+)

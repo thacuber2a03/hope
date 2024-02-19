@@ -1,0 +1,32 @@
+(func clear (r g b)
+	(hope:set-color r g b)
+	(hope:clear)
+)
+
+(= boxSize 100)
+
+(func hope:update (dt)
+	(if (hope:key-down "escape") (hope:quit))
+
+	(let mousePos (hope:get-mouse-pos))
+	(let mx (car mousePos)) (let my (cdr mousePos))
+
+	(clear 0 0 0)
+
+	(hope:set-color 1 1 1)
+	(if (hope:mouse-button-down "left" ) (hope:set-color 0 0 1)
+	    (hope:mouse-button-down "right") (hope:set-color 1 0 0))
+
+	(hope:rect "fill" (- mx (/ boxSize 2)) (- my (/ boxSize 2)) boxSize boxSize)
+
+	(hope:set-color 1 1 1)
+	(let mouseButtons (list "left" "middle" "right"))
+	(let i 0)
+	(while mouseButtons
+		(let btn (list:pop mouseButtons))
+		(when (hope:mouse-button-down btn)
+			(hope:text btn 0 (* i (hope:get-font-height)))
+			(inc i)
+		)
+	)
+)

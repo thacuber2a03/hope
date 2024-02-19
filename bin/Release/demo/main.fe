@@ -1,0 +1,108 @@
+(= wWidth (hope:get-window-width))
+(= wHeight (hope:get-window-height))
+
+(func hope:init ()
+	; player info
+	(= playerX (/ wWidth 2) )
+	(= playerY (/ wHeight 2) )
+	(= playerW 100) (= playerH 100)
+	; subtract half the player's size from the position to center
+	(-= playerX (/ playerW 2)) (-= playerY (/ playerH 2))
+	(= playerScore 0)
+
+	; coin info
+	(= coinX 0) (= coinY 0)
+	(move-coin)
+	(= coinR 20)
+
+	; assets
+	(= arial (hope:load-font "arial.ttf" 20))
+	; (= coinSound (hope:load-sound "coin.wav"))
+)
+
+(func move-coin ()
+	(= coinX (random 0 wWidth))
+	(= coinY (random 0 wHeight))
+)
+
+; rect-vs-circle function taken from
+; jeffreythompson.org/collision-detection
+; thanks!
+(func rect-vs-circle (rx ry w h
+                      cx cy r)
+	(let testX cx)
+	(let testY cy)
+
+	(if
+		(< cx rx)       (= testX rx)
+		(> cx (+ rx w)) (= testX (+ rx w))
+	)
+
+	(if
+		(< cy ry)       (= testY ry)
+		(> cy (+ ry h)) (= testY (+ ry h))
+	)
+
+	(let distX (- cx testX))
+	(let distY (- cy testY))
+	(let distance (hope:sqrt (+ (* distX distX) (* distY distY))))
+
+	(<= distance r)
+)
+
+(func update-player ()
+	(let mousePos (hope:get-mouse-pos))
+	(= playerX (- (car mousePos) (/ playerW 2)))
+	(= playerY (- (cdr mousePos) (/ playerH 2)))
+
+	; (if
+	; 	(hope:key-down "right") (+= playerX 1)
+	; 	(hope:key-down "left")  (-= playerX 1)
+	; )
+
+	; (if
+	; 	(hope:key-down "down") (+= playerY 1)
+	; 	(hope:key-down "up")   (-= playerY 1)
+	; )
+)
+
+(func constrain-in-walls ()
+	(if
+		(< playerX 0) (= playerX 0)
+		(> playerX (- wWidth playerW)) (= playerX (- wWidth playerW))
+	)
+
+	(if
+		(< playerY 0) (= playerY 0)
+		(> playerY (- wHeight playerH)) (= playerY (- wHeight playerH))
+	)
+)
+
+(func hope:update ()
+	(update-player)
+	(constrain-in-walls)
+	(if (hope:key-down "q") (hope:quit))
+
+	(hope:set-color 0 .8 0)
+	(hope:clear)
+
+	(hope:set-color 0 0 1)
+	(when (rect-vs-circle playerX playerY playerW playerH coinX coinY coinR)
+		(move-coin)
+		(inc playerScore)
+		(hope:play-sound coinSound)
+	)
+	(hope:rect "fill" playerX playerY playerW playerH)
+
+	(hope:set-color 1 1 0)
+	(hope:circ "fill" coinX coinY coinR)
+
+	(hope:set-color 1 1 1)
+	(hope:text "Score" 0 0)
+	(hope:text playerScore 0 (hope:get-font-height arial))
+)
+
+(func hope:exit ()
+	(hope:unload-font arial)
+	; (hope:unload-sound coinSound)
+)

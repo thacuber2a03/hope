@@ -1,0 +1,9 @@
+(func clamp (v mn mx)
+	
+)
+
+(func hope:update ()
+	(= mx (car (hope:get-mouse-pos)))
+	(= my (cdr (hope:get-mouse-pos)))
+
+)

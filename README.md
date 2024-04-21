@@ -32,7 +32,7 @@ currently the api is so small I can put it in the readme, but it might be extend
 
 | function | description |
 | :-: | :-: |
-| (pow x) | returns `x` to the `y` power |
+| (pow x y) | returns `x` to the `y` power |
 | (sqrt x) | returns the square root of `x` |
 | (sin x) | returns the sine of `x` |
 | (cos x) | returns the cosine of `x` |

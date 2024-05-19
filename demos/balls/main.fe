@@ -29,7 +29,7 @@
 	(= pos (list:nthcdr b 0))
 	(= vel (list:nthcdr b 1))
 
-	; working with pointers is annoying as fuck
+	; working with pointers is annoying as hell
 	(setcdr (car vel) (+ (cdar vel) (or grav gravity)))
 	(setcar pos (vector:add (car pos) (vector:scale (car vel) dt)))
 )
@@ -39,7 +39,8 @@
 	(= vel (list:nthcdr b 1))
 	(= rad (list:nth    b 2))
 
-	; I will go crazy
+	; ughhhhhhhhh
+
 	(when (< (caar pos) rad)
 		(setcar (car pos) rad)
 		(setcar (car vel) (neg (caar vel)))
